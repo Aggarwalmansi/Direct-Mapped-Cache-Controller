@@ -1,0 +1,27 @@
+# =============================================================================
+# Member 5: FPGA-mapped synthesis of cache_top for Xilinx 7-series (Yosys)
+# Run from the repository root:  yosys -s synth/synth_xc7.ys
+#
+# The 64x128 data RAM and 64x22 tag RAM have combinational (asynchronous)
+# reads, so they map to distributed LUT-RAM (RAM64X1S) rather than block RAM.
+# Valid bits need a global clear on reset and therefore map to flip-flops.
+# main_memory_model.v is simulation-only and is intentionally not read.
+# =============================================================================
+read_verilog rtl/address_decoder.v
+read_verilog rtl/tag_comparator.v
+read_verilog rtl/cache_data_ram.v
+read_verilog rtl/tag_ram.v
+read_verilog rtl/valid_bit_ram.v
+read_verilog rtl/cache_controller.v
+read_verilog rtl/main_memory_interface.v
+read_verilog rtl/cache_top.v
+
+hierarchy -check -top cache_top
+synth_xilinx -top cache_top -family xc7 -flatten
+
+tee -o build/synth/xc7_stat.txt stat
+# Note: no timing here. `ltp` cannot see through the Xilinx FDCE/RAM64X1S
+# primitives and no place-and-route tool is used; the logic-depth figure comes
+# from synth_generic.ys instead.
+check -assert
+write_verilog -noattr build/synth/cache_top_xc7_netlist.v

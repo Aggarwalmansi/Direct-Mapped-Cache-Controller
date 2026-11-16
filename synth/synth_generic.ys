@@ -1,0 +1,27 @@
+# =============================================================================
+# Member 5: technology-independent synthesis of cache_top (Yosys)
+# Run from the repository root:  yosys -s synth/synth_generic.ys
+# main_memory_model.v is simulation-only and is intentionally not read.
+# =============================================================================
+read_verilog rtl/address_decoder.v
+read_verilog rtl/tag_comparator.v
+read_verilog rtl/cache_data_ram.v
+read_verilog rtl/tag_ram.v
+read_verilog rtl/valid_bit_ram.v
+read_verilog rtl/cache_controller.v
+read_verilog rtl/main_memory_interface.v
+read_verilog rtl/cache_top.v
+
+hierarchy -check -top cache_top
+
+# Hierarchical resource report (per module)
+synth -top cache_top
+tee -o build/synth/generic_stat_hier.txt stat
+
+# Flattened design: total resources and logic depth (longest comb. path)
+flatten
+opt -purge
+tee -o build/synth/generic_stat.txt stat
+tee -o build/synth/generic_ltp.txt ltp -noff
+check -assert
+write_verilog -noattr build/synth/cache_top_generic_netlist.v
