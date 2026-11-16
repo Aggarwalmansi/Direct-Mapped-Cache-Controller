@@ -342,3 +342,22 @@ Tests are written in self-checking Verilog with `$fatal` assertions on failure.
 7. **Cache Controller Integration:** Connects `cache_controller.v` directly to `main_memory_interface.v` and `main_memory_model.v`, verifying cold miss detection, CPU stall enforcement, 4-word block refill, CPU data return, subsequent post-refill hits with zero memory transactions, and line eviction on tag conflict.
 
 Verified with Icarus Verilog 13.0 (`make test` passed cleanly across Members 1–5) and synthesized with Yosys 0.71 (`make synth`).
+
+## Integrated verification and final submission
+
+The team integration was fetched through `ba8d39d`. The Makefile now points to
+`tb/tb_member5.v`, the committed system testbench filename.
+
+- [Final technical report and requirement checklist](reports/technical_report.md)
+- [Architecture and FSM diagrams](docs/architecture.md)
+- [Live demonstration commands](docs/demo.md)
+- [Measured performance and equal-capacity baseline models](reports/performance.md)
+- [Actual simulation waveform preview](reports/waveform.svg)
+- [Full verification log](reports/simulation.log)
+
+From the repository root, `source scripts/env.sh` activates the ignored local
+OSS CAD Suite if present. Run `make test`, `make waveforms`, `make analyze`,
+`make synth`, and `make synth_ecp5`. The ECP5 benchmark defaults to 80 MHz;
+`PNR_FREQ=100` intentionally exercises a target that failed in this run.
+The routed internal Fmax estimate was 94.84 MHz; this is not a board guarantee.
+The simulation clock of 100 MHz must not be presented as timing closure.
