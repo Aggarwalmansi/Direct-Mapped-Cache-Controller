@@ -1,9 +1,18 @@
-.PHONY: test clean
+.PHONY: all test test_member1 test_member2 clean
 
-test:
+all: test
+
+test: test_member1 test_member2
+
+test_member1:
 	mkdir -p build
 	iverilog -g2012 -Wall -s tb_member1 -o build/member1 rtl/address_decoder.v rtl/tag_comparator.v tb/tb_member1.v
 	vvp build/member1
+
+test_member2:
+	mkdir -p build
+	iverilog -g2012 -Wall -s tb_member2 -o build/member2 rtl/cache_data_ram.v rtl/tag_ram.v rtl/valid_bit_ram.v tb/tb_member2.v
+	vvp build/member2
 
 clean:
 	rm -rf build
