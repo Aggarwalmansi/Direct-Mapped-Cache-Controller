@@ -11,6 +11,7 @@ RTL_SYNTH = rtl/address_decoder.v \
 	rtl/cache_top.v
 
 # Extra vvp plusargs for the Member 5 testbench, e.g. make test_member5 SIMFLAGS=+VCD
+PNR_FREQ ?= 80
 SIMFLAGS ?=
 
 all: test
@@ -58,7 +59,7 @@ test_member5:
 	iverilog -g2012 -Wall -s tb_cache_top -o build/member5 \
 		$(RTL_SYNTH) \
 		rtl/main_memory_model.v \
-		tb/tb_cache_top.v
+		tb/tb_member5.v
 	vvp -n build/member5 +TRACE_DIR=traces $(SIMFLAGS)
 
 # Regenerate traces/*.trace (deterministic; the generated files are committed)
@@ -80,3 +81,28 @@ synth_xc7:
 
 clean:
 	rm -rf build
+
+.PHONY: analyze waveforms synth_ecp5 demo
+analyze:
+	python3 scripts/analyze_results.py
+
+waveforms:
+	$(MAKE) test_member5 SIMFLAGS=+VCD
+	python3 scripts/waveform_preview.py
+
+# Device benchmark only; no board pinout or external I/O budgets are assumed.
+synth_ecp5:
+	mkdir -p build/synth
+	yosys -Q -l build/synth/ecp5.log -s synth/synth_ecp5.ys
+	nextpnr-ecp5 --25k --package CABGA256 --speed 6 --seed 1 --freq $(PNR_FREQ) --json build/synth/cache_top_ecp5.json --textcfg build/synth/cache_top_ecp5.config --lpf-allow-unconstrained --report build/synth/ecp5_timing.json --log build/synth/ecp5_pnr.log
+
+demo: test waveforms analyze
+
+.PHONY: verify
+# Refresh the retained evidence; fail immediately if simulation or analysis fails.
+verify:
+	mkdir -p reports
+	$(MAKE) test SIMFLAGS=+VCD > reports/simulation.log 2>&1 || { cat reports/simulation.log; exit 1; }
+	cat reports/simulation.log
+	python3 scripts/analyze_results.py
+	python3 scripts/waveform_preview.py
