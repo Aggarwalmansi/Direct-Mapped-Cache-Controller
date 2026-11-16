@@ -1,0 +1,192 @@
+
+11. Printing statistics.
+
+=== cache_top ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       15 wires
+      297 wire bits
+       15 public wires
+      297 public wire bits
+       11 ports
+      135 port bits
+        2 submodules
+        1   cache_controller
+        1   main_memory_interface
+
+=== main_memory_interface ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       38 wires
+      421 wire bits
+       14 public wires
+      397 public wire bits
+       10 ports
+      230 port bits
+      218 cells
+        5   $_ANDNOT_
+       36   $_AND_
+      156   $_DFFE_PP0P_
+        6   $_DFF_PP0_
+        1   $_DFF_PP1_
+        1   $_NAND_
+        2   $_NOR_
+        2   $_NOT_
+        9   $_OR_
+
+=== cache_controller ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      121 wires
+      707 wire bits
+       30 public wires
+      585 public wire bits
+       11 ports
+      231 port bits
+      356 cells
+        4   $_ANDNOT_
+        3   $_AND_
+      195   $_DFFE_PP0P_
+      128   $_MUX_
+        4   $_NAND_
+        2   $_NOR_
+        5   $_NOT_
+        4   $_ORNOT_
+       11   $_OR_
+        5 submodules
+        1   address_decoder
+        1   cache_data_ram
+        1   tag_comparator
+        1   tag_ram
+        1   valid_bit_ram
+
+=== valid_bit_ram ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      419 wires
+      424 wire bits
+       70 public wires
+       75 public wire bits
+        6 ports
+       11 port bits
+      414 cells
+        4   $_ANDNOT_
+      184   $_AND_
+       64   $_DFFE_PP0P_
+        1   $_MUX_
+        4   $_NAND_
+      125   $_NOR_
+        6   $_NOT_
+        2   $_ORNOT_
+       24   $_OR_
+
+=== tag_ram ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1536 wires
+     2927 wire bits
+       69 public wires
+     1460 public wire bits
+        5 ports
+       52 port bits
+     2897 cells
+        2   $_ANDNOT_
+       93   $_AND_
+     1408   $_DFFE_PP_
+     1386   $_MUX_
+        2   $_NOR_
+        6   $_NOT_
+
+=== cache_data_ram ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     8814 wires
+    17106 wire bits
+       70 public wires
+     8362 public wire bits
+        6 ports
+      170 port bits
+    16968 cells
+        2   $_ANDNOT_
+      260   $_AND_
+     8192   $_DFFE_PP_
+     7876   $_MUX_
+      441   $_NAND_
+        3   $_NOR_
+        6   $_NOT_
+       87   $_ORNOT_
+      101   $_OR_
+
+=== tag_comparator ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       83 wires
+      125 wire bits
+        4 public wires
+       46 public wire bits
+        4 ports
+       46 port bits
+       80 cells
+       40   $_AND_
+       36   $_ORNOT_
+        4   $_XNOR_
+
+=== address_decoder ===
+
+        +----------Local Count, excluding submodules.
+        | 
+        6 wires
+       96 wire bits
+        6 public wires
+       96 public wire bits
+        6 ports
+       96 port bits
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+    20933 cache_top
+      356 cache_controller
+    16968   cache_data_ram
+       80   tag_comparator
+     2897   tag_ram
+      414   valid_bit_ram
+      218 main_memory_interface
+
+        +----------Count including submodules.
+        | 
+    11032 wires
+    22103 wire bits
+      278 public wires
+    11318 public wire bits
+       59 ports
+      971 port bits
+        - memories
+        - memory bits
+        - processes
+    20933 cells
+       17   $_ANDNOT_
+      616   $_AND_
+      415   $_DFFE_PP0P_
+     9600   $_DFFE_PP_
+        6   $_DFF_PP0_
+        1   $_DFF_PP1_
+     9391   $_MUX_
+      450   $_NAND_
+      134   $_NOR_
+       25   $_NOT_
+      129   $_ORNOT_
+      145   $_OR_
+        4   $_XNOR_
+        2 submodules
+        1   cache_controller
+        1   main_memory_interface
+

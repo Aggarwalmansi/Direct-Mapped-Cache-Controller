@@ -1,0 +1,26 @@
+15. Executing LTP pass (find longest path).
+
+Longest topological path in cache_top (length=21):
+    0: \blk_addr [7]
+    1: $flatten\u_cache_controller.\u_data_ram.$abc$27710$auto$rtlil.cc:3252:Eq$4312 (via $flatten\u_cache_controller.\u_tag_ram.$abc$27822$blif$27822$0)
+    2: $flatten\u_cache_controller.\u_valid_ram.$abc$27876$auto$simplemap.cc:148:simplemap_reduce$24890[1] (via $flatten\u_cache_controller.\u_valid_ram.$abc$27876$blif$27876$1)
+    3: $flatten\u_cache_controller.\u_valid_ram.$abc$27854$auto$simplemap.cc:148:simplemap_reduce$24934 (via $flatten\u_cache_controller.\u_valid_ram.$abc$27899$blif$27899$0)
+    4: $flatten\u_cache_controller.\u_valid_ram.$abc$27841$procmux$271_CMP (via $flatten\u_cache_controller.\u_valid_ram.$abc$27892$blif$27892$0)
+    5: $flatten\u_cache_controller.\u_valid_ram.$abc$27841$auto$simplemap.cc:465:simplemap_pmux$24654 (via $flatten\u_cache_controller.\u_valid_ram.$abc$27892$blif$27892$2)
+    6: $flatten\u_cache_controller.\u_valid_ram.$abc$27841$new_n204 (via $flatten\u_cache_controller.\u_valid_ram.$abc$27841$blif$27841$71)
+    7: $flatten\u_cache_controller.\u_valid_ram.$abc$27841$new_n206 (via $flatten\u_cache_controller.\u_valid_ram.$abc$27841$blif$27841$73)
+    8: $flatten\u_cache_controller.\u_valid_ram.$abc$27841$new_n210 (via $flatten\u_cache_controller.\u_valid_ram.$abc$27841$blif$27841$77)
+    9: $flatten\u_cache_controller.\u_valid_ram.$abc$27841$new_n211 (via $flatten\u_cache_controller.\u_valid_ram.$abc$27841$blif$27841$78)
+   10: $flatten\u_cache_controller.\u_valid_ram.$abc$27841$new_n227 (via $flatten\u_cache_controller.\u_valid_ram.$abc$27841$blif$27841$94)
+   11: $flatten\u_cache_controller.\u_valid_ram.$abc$27841$new_n258 (via $flatten\u_cache_controller.\u_valid_ram.$abc$27841$blif$27841$125)
+   12: \u_cache_controller.stored_valid (via $flatten\u_cache_controller.\u_valid_ram.$abc$27841$blif$27841$126)
+   13: $flatten\u_cache_controller.\u_comparator.$abc$27912$new_n118 (via $flatten\u_cache_controller.\u_comparator.$abc$27912$blif$27912$71)
+   14: $flatten\u_cache_controller.\u_comparator.$abc$27912$new_n122 (via $flatten\u_cache_controller.\u_comparator.$abc$27912$blif$27912$75)
+   15: $flatten\u_cache_controller.\u_comparator.$abc$27912$new_n123 (via $flatten\u_cache_controller.\u_comparator.$abc$27912$blif$27912$76)
+   16: $flatten\u_cache_controller.\u_comparator.$abc$27912$new_n124 (via $flatten\u_cache_controller.\u_comparator.$abc$27912$blif$27912$77)
+   17: $flatten\u_cache_controller.\u_comparator.$abc$27912$new_n125 (via $flatten\u_cache_controller.\u_comparator.$abc$27912$blif$27912$78)
+   18: \u_cache_controller.cache_hit (via $flatten\u_cache_controller.\u_comparator.$abc$27912$blif$27912$79)
+   19: $flatten\u_cache_controller.$abc$27910$new_n37 (via $flatten\u_cache_controller.$abc$27910$blif$27910$14)
+   20: $flatten\u_cache_controller.$abc$27910$new_n39 (via $flatten\u_cache_controller.$abc$27910$blif$27910$16)
+   21: \u_cache_controller.next_state [0] (via $flatten\u_cache_controller.$abc$27910$blif$27910$17)
+   ff: \u_cache_controller.state [0] (via $flatten\u_cache_controller.$auto$ff.cc:337:slice$26344)

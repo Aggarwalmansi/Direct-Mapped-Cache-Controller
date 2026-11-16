@@ -1,0 +1,6 @@
+# Board-independent timing benchmark, LFE5U-25F/CABGA256 speed grade 6.
+# Real board integration requires pin constraints and I/O timing budgets.
+read_verilog rtl/address_decoder.v rtl/tag_comparator.v rtl/cache_data_ram.v rtl/tag_ram.v rtl/valid_bit_ram.v rtl/cache_controller.v rtl/main_memory_interface.v rtl/cache_top.v
+synth_ecp5 -top cache_top -json build/synth/cache_top_ecp5.json
+tee -o build/synth/ecp5_stat.txt stat
+check -assert
