@@ -361,3 +361,9 @@ OSS CAD Suite if present. Run `make test`, `make waveforms`, `make analyze`,
 `PNR_FREQ=100` intentionally exercises a target that failed in this run.
 The routed internal Fmax estimate was 94.84 MHz; this is not a board guarantee.
 The simulation clock of 100 MHz must not be presented as timing closure.
+
+## IEEE Project Report
+
+[Download the final project report](project_report/ByteMe_IEEE_Project_Report.docx)
+for Team ByteMe, Section D, including the architecture, verification results,
+performance analysis, individual contributions, and references.
