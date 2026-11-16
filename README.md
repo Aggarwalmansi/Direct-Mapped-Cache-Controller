@@ -1,7 +1,10 @@
 # Direct-Mapped Cache Controller
 
 **Team ByteMe · Section D**
-
+> [!Important]
+> ##  Project Video
+> **Watch the project demo video on Google Drive:**
+> ### 👉 [**Open the Project Video (Google Drive)**](https://drive.google.com/drive/u/0/folders/1IOG2N3P3jU9f9sL_8U6O8kBgdy0eofwT?q=sharedwith:public%20parent:1IOG2N3P3jU9f9sL_8U6O8kBgdy0eofwT)
 A modular, synthesizable Verilog implementation of a 1 KB direct-mapped cache with a four-word refill interface. The project studies temporal locality, spatial locality, placement conflicts, hit/miss ratios, and average memory access time (AMAT).
 
 [Download the IEEE project report](project_report/ByteMe_IEEE_Project_Report.docx) · [Architecture and FSM diagrams](docs/architecture.md) · [Live demonstration guide](docs/demo.md)
