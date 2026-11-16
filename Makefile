@@ -16,14 +16,14 @@ test_member2:
 
 test_member3:
 	mkdir -p build
-	iverilog -g2012 -Wall -s tb_cache_controller -o build/member3 \
+	iverilog -g2012 -Wall -s tb_member3 -o build/member3 \
 		rtl/address_decoder.v \
 		rtl/tag_comparator.v \
 		rtl/cache_data_ram.v \
 		rtl/tag_ram.v \
 		rtl/valid_bit_ram.v \
 		rtl/cache_controller.v \
-		tb/tb_cache_controller.v
+		tb/tb_member3.v
 	vvp build/member3
 
 clean:

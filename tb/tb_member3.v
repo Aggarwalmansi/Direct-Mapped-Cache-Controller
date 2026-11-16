@@ -1,7 +1,7 @@
 `timescale 1ns/1ps
 
 // =============================================================================
-// Testbench: tb_cache_controller
+// Testbench: tb_member3
 // Project: Direct-Mapped Cache Controller (1 KB Capacity, 16-Byte Block)
 // Member: Member 3 — Controller FSM & Datapath Integration
 //
@@ -17,7 +17,7 @@
 //   Test 9: Consecutive Back-to-Back Requests with Single-Pulse Handshakes
 // =============================================================================
 
-module tb_cache_controller;
+module tb_member3;
 
     // Clock and Reset signals
     reg         clk;

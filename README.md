@@ -146,7 +146,7 @@ The controller is implemented as a clean, synthesizable 7-state Moore/Mealy hybr
 |---|---|:---:|---|
 | **Member 1** | Address Decoding & Tag Comparison | **Completed** | `rtl/address_decoder.v`, `rtl/tag_comparator.v`, `tb/tb_member1.v` |
 | **Member 2** | Cache Storage (RAMs) | **Completed** | `rtl/cache_data_ram.v`, `rtl/tag_ram.v`, `rtl/valid_bit_ram.v`, `tb/tb_member2.v` |
-| **Member 3** | Controller FSM & Datapath Integration | **Completed** | `rtl/cache_controller.v`, `tb/tb_cache_controller.v` |
+| **Member 3** | Controller FSM & Datapath Integration | **Completed** | `rtl/cache_controller.v`, `tb/tb_member3.v` |
 | **Member 4** | Write Policy / Write Buffer / Cache Statistics | *Pending* | Write-through / write-back logic, hit/miss counters (future assignment) |
 | **Member 5** | Top-Level Integration & System Testbench | *Pending* | `cache_top` SoC wrapper, CPU bus interface, system-level verification |
 
