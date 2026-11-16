@@ -102,6 +102,61 @@ Implements the primary storage structures for data blocks, tags, and line validi
 
 ---
 
+### Member 4 — Main-Memory Interface and Model
+
+- **Modules:**
+  - `rtl/main_memory_interface.v` (Synthesizable 32-bit burst refill interface)
+  - `rtl/main_memory_model.v` (Simulation-only behavioral backing memory model)
+- **Testbench:** `tb/tb_member4.v`
+- **Functionality:** Implements the main-memory subsystem responsible for servicing cache line refills. Accepts the cache controller's 1-cycle active-high `mem_req` strobe and 16-byte aligned `mem_addr`, fetches four consecutive 32-bit words sequentially over a 32-bit read interface from the memory model, and assembles the full 128-bit cache refill block. Delivers a clean, single-cycle `mem_ready` strobe with stable data to `cache_controller.v`.
+
+#### Architecture & Handshake Protocol
+
+```
++--------------------+                       +------------------------+                       +---------------------+
+|                    |  mem_req (1-cycle)    |                        |  model_req (1-cycle)  |                     |
+|                    | --------------------> |                        | --------------------> |                     |
+|  cache_controller  |  mem_addr [31:0]      | main_memory_interface  |  model_addr [31:0]    |  main_memory_model  |
+|                    | --------------------> |   (4-word assembler)   | --------------------> |  (behavioral store) |
+|                    |  mem_ready (1-cycle)  |                        |  model_ready (1-cycle)|                     |
+|                    | <-------------------- |                        | <-------------------- |                     |
+|                    |  mem_data [127:0]     |                        |  model_data [31:0]    |                     |
+|                    | <-------------------- |                        | <-------------------- |                     |
++--------------------+                       +------------------------+                       +---------------------+
+```
+
+#### Exact Word Ordering (Verified from RTL)
+- `mem_data[31:0]`   = Word 0 at `block_addr + 0`  (`word_offset = 2'b00`)
+- `mem_data[63:32]`  = Word 1 at `block_addr + 4`  (`word_offset = 2'b01`)
+- `mem_data[95:64]`  = Word 2 at `block_addr + 8`  (`word_offset = 2'b10`)
+- `mem_data[127:96]` = Word 3 at `block_addr + 12` (`word_offset = 2'b11`)
+- Combined 128-bit literal: `mem_data = {Word 3, Word 2, Word 1, Word 0}`
+
+#### Latency Semantics & Handshake Resolution
+- **Memory Model Latency:** Parameterizable via `DEFAULT_LATENCY` and dynamically configurable via `set_latency(N)`.
+  - `latency = 0`: Immediate combinational response (`ready = req`, zero wait states). Interface captures each word in 1 clock cycle (4 cycles total fetch + 1 cycle response = 5 cycles).
+  - `latency = 1`: 1 wait-state per word (2 cycles per word, 9 cycles total).
+  - `latency = 5`: 5 wait-states per word (6 cycles per word, 25 cycles total).
+  - `latency = 10`: 10 wait-states per word (11 cycles per word, 45 cycles total).
+- **Zero-Latency Handshake Compatibility:** The interface pulses `model_req` for 1 cycle per word and advances synchronously at each rising clock edge where `model_ready` is sampled high. `cache_controller.v` waits in `S_WAIT_MEMORY` with `cpu_stall = 1` until `main_memory_interface` completes the 4-word assembly and pulses `mem_ready = 1`, ensuring 100% glitch-free compatibility across all latencies.
+
+#### Module Interface: `main_memory_interface`
+
+| Signal | Direction | Width | Description |
+|---|:---:|:---:|---|
+| `clk` | Input | 1 bit | Master clock (posedge active) |
+| `reset` | Input | 1 bit | Active-high asynchronous reset |
+| `mem_req` | Input | 1 bit | Active-high 1-cycle request strobe from `cache_controller` |
+| `mem_addr` | Input | 32 bits | 16-byte aligned block address from `cache_controller` |
+| `mem_ready` | Output | 1 bit | Active-high 1-cycle data valid strobe to `cache_controller` |
+| `mem_data` | Output | 128 bits | Assembled 128-bit cache refill block `{Word3, Word2, Word1, Word0}` |
+| `model_req` | Output | 1 bit | Active-high 1-cycle read request strobe to memory model per word |
+| `model_addr` | Output | 32 bits | 32-bit word-aligned address driven to memory model |
+| `model_ready` | Input | 1 bit | Active-high data valid strobe from memory model |
+| `model_data` | Input | 32 bits | 32-bit word returned from memory model |
+
+---
+
 ### Project Status & Roadmap
 
 | Member | Focus Area | Status | Deliverables |
@@ -109,7 +164,7 @@ Implements the primary storage structures for data blocks, tags, and line validi
 | **Member 1** | Address Decoding & Tag Comparison | **Completed** | `rtl/address_decoder.v`, `rtl/tag_comparator.v`, `tb/tb_member1.v` |
 | **Member 2** | Cache Storage (RAMs) | **Completed** | `rtl/cache_data_ram.v`, `rtl/tag_ram.v`, `rtl/valid_bit_ram.v`, `tb/tb_member2.v` |
 | **Member 3** | Controller FSM & Datapath Integration | **Completed** | `rtl/cache_controller.v`, `tb/tb_member3.v` |
-| **Member 4** | Write Policy / Write Buffer / Cache Statistics | *Pending* | Write-through / write-back logic, hit/miss counters |
+| **Member 4** | Main-Memory Interface and Model | **Completed** | `rtl/main_memory_interface.v`, `rtl/main_memory_model.v`, `tb/tb_member4.v` |
 | **Member 5** | Top-Level Integration & System Testbench | *Pending* | `cache_top` SoC wrapper, CPU bus interface, system verification |
 
 ---
@@ -120,7 +175,7 @@ Tests are written in self-checking Verilog with `$fatal` assertions on failure.
 
 ### Test Targets
 
-- **Run all tests (Members 1, 2, and 3):**
+- **Run all tests (Members 1, 2, 3, and 4):**
   ```bash
   make test
   ```
@@ -135,6 +190,10 @@ Tests are written in self-checking Verilog with `$fatal` assertions on failure.
 - **Run Member 3 tests only:**
   ```bash
   make test_member3
+  ```
+- **Run Member 4 tests only:**
+  ```bash
+  make test_member4
   ```
 - **Clean build artifacts:**
   ```bash
@@ -161,4 +220,13 @@ Tests are written in self-checking Verilog with `$fatal` assertions on failure.
 7. **Conflict & Replacement:** Accessing differing tags at same index causes eviction, refill, and tag replacement.
 8. **Consecutive Requests:** Stream of 6 back-to-back hit/miss requests generates exactly one response strobe per request.
 
-Verified with Icarus Verilog 13.0 (`make test` passed cleanly).
+### Verification Scenarios Covered (Member 4)
+1. **Reset Behavior & Mid-Flight Abort:** Verifies IDLE state, inactive control outputs (`mem_ready = 0`, `model_req = 0`), and clean abort of active multi-cycle fetches upon reset.
+2. **128-bit Block Assembly & Word Ordering:** Verifies four 32-bit words are sequentially fetched over 32-bit memory-read interface and assembled matching verified cache data ordering: `mem_data = {Word3, Word2, Word1, Word0}`.
+3. **16-Byte Block Alignment:** Requests unaligned addresses (`+0x4`, `+0x8`, `+0xE`) and confirms hardware masks address to 16-byte aligned base (`{addr[31:4], 4'b0000}`).
+4. **Configurable Latency Coverage:** Verifies correct operation across 0, 1, 5, and 10 clock cycles of memory delay, ensuring single-cycle `mem_ready` pulses and stable data delivery.
+5. **Back-to-Back Block Streams:** Executes rapid consecutive requests across different block addresses without dropped requests, protocol stalls, or stale data.
+6. **Deterministic Memory Default Pattern:** Verifies unwritten addresses return deterministic, address-dependent default words.
+7. **Cache Controller Integration:** Connects `cache_controller.v` directly to `main_memory_interface.v` and `main_memory_model.v`, verifying cold miss detection, CPU stall enforcement, 4-word block refill, CPU data return, subsequent post-refill hits with zero memory transactions, and line eviction on tag conflict.
+
+Verified with Icarus Verilog 13.0 (`make test` passed cleanly across Members 1, 2, 3, and 4).
