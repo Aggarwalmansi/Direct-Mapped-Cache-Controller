@@ -1,8 +1,8 @@
-.PHONY: all test test_member1 test_member2 test_member3 clean
+.PHONY: all test test_member1 test_member2 test_member3 test_member4 clean
 
 all: test
 
-test: test_member1 test_member2 test_member3
+test: test_member1 test_member2 test_member3 test_member4
 
 test_member1:
 	mkdir -p build
@@ -25,6 +25,20 @@ test_member3:
 		rtl/cache_controller.v \
 		tb/tb_member3.v
 	vvp build/member3
+
+test_member4:
+	mkdir -p build
+	iverilog -g2012 -Wall -s tb_member4 -o build/member4 \
+		rtl/address_decoder.v \
+		rtl/tag_comparator.v \
+		rtl/cache_data_ram.v \
+		rtl/tag_ram.v \
+		rtl/valid_bit_ram.v \
+		rtl/cache_controller.v \
+		rtl/main_memory_interface.v \
+		rtl/main_memory_model.v \
+		tb/tb_member4.v
+	vvp build/member4
 
 clean:
 	rm -rf build
