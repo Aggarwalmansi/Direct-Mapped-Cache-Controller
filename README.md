@@ -3,7 +3,7 @@
 > [!Important]
 > ##  Project Video
 > **Watch the project demo video on Google Drive:**
-> ### 👉 [**Open the Project Video (Google Drive)**](https://drive.google.com/drive/u/0/folders/1IOG2N3P3jU9f9sL_8U6O8kBgdy0eofwT?q=sharedwith:public%20parent:1IOG2N3P3jU9f9sL_8U6O8kBgdy0eofwT)
+> ### 👉 [**Open the Project Video (Google Drive)**](https://drive.google.com/file/d/1jduN_4kAap_2NAUFFYbR0nafiKiM6ZxO/view?usp=sharing)
 A synthesizable Verilog implementation of a 1 KB Direct-Mapped Cache Controller with 16-byte cache blocks and 32-bit addressing.
 
 ## Cache Architecture and Parameters
