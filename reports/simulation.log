@@ -1,0 +1,155 @@
+mkdir -p build
+iverilog -g2012 -Wall -s tb_member1 -o build/member1 rtl/address_decoder.v rtl/tag_comparator.v tb/tb_member1.v
+vvp build/member1
+PASS: Member 1 decoder and comparator checks
+tb/tb_member1.v:72: $finish called at 5131000 (1ps)
+mkdir -p build
+iverilog -g2012 -Wall -s tb_member2 -o build/member2 rtl/cache_data_ram.v rtl/tag_ram.v rtl/valid_bit_ram.v tb/tb_member2.v
+vvp build/member2
+==================================================
+Starting Member 2 Testbench: Cache Storage Modules
+==================================================
+[Test 1] Reset valid_bit_ram and verify all 64 lines are 0
+[Test 2] Write 128-bit block into line 5 and verify 4 words
+[Test 3] Overwrite line 5 with a new block and verify replacement
+[Test 4] Boundary indices test: index 0 and index 63 for data RAM
+[Test 5] Verify all 64 data RAM lines independently addressable
+[Test 6] Write and retrieve tags from multiple indices
+[Test 7] Verify updating one tag does not modify another line
+[Test 8] Write distinct tags to all 64 lines and read back
+[Test 9] Valid bit operations: set, clear, isolation
+[Test 10] Walking single valid bit across all 64 lines
+[Test 11] Verify combinational read behavior (no clock required)
+[Test 12] Verify write_enable gating (no write when we = 0)
+==================================================
+PASS: Member 2 cache storage all checks succeeded
+==================================================
+tb/tb_member2.v:372: $finish called at 5969000 (1ps)
+mkdir -p build
+iverilog -g2012 -Wall -s tb_member3 -o build/member3 \
+		rtl/address_decoder.v \
+		rtl/tag_comparator.v \
+		rtl/cache_data_ram.v \
+		rtl/tag_ram.v \
+		rtl/valid_bit_ram.v \
+		rtl/cache_controller.v \
+		tb/tb_member3.v
+vvp build/member3
+==================================================
+Starting Member 3 Testbench: Cache Controller FSM
+==================================================
+[Test 1] Apply reset and verify IDLE state, inactive signals, cleared valid bits
+         Reset verified: all 64 valid bits cleared, controller in IDLE
+[Test 2] Cache Hit on pre-loaded cache line (verify correct word, no mem_req)
+         Cache hit passed: returned 0x12345678, zero memory requests
+[Test 3 & 4] Cache Miss detection, CPU stall, Memory Request and Refill
+         Refill verified: block written, tag=0x055555, valid=1, returned 0x33333333
+[Test 5] Post-Refill Hit: submit same address again, verify hit with no mem_req
+         Post-refill hit passed: returned 0x33333333 without memory transaction
+[Test 6] Read all 4 word offsets from cached line 12
+         All 4 word offsets (00, 01, 10, 11) verified correctly on cache hits
+[Test 7] Delayed memory response (latency = 6 clock cycles)
+         Delayed memory response passed: waited 6 cycles, single pulse response
+[Test 8] Conflicting Addresses: line replacement at index 15
+         Address A cached at line 15 (Tag = 0x111111)
+         Address B successfully replaced Address A at line 15 (Tag = 0x222222)
+         Address B verified as cache hit after replacement
+         Address A re-fetched and replaced Address B correctly
+[Test 9] Consecutive back-to-back requests (hits and misses)
+         Consecutive requests verified: 6/6 requests completed cleanly
+==================================================
+PASS: Member 3 Cache Controller all tests PASSED!
+==================================================
+tb/tb_member3.v:482: $finish called at 1255000 (1ps)
+mkdir -p build
+iverilog -g2012 -Wall -s tb_member4 -o build/member4 \
+		rtl/address_decoder.v \
+		rtl/tag_comparator.v \
+		rtl/cache_data_ram.v \
+		rtl/tag_ram.v \
+		rtl/valid_bit_ram.v \
+		rtl/cache_controller.v \
+		rtl/main_memory_interface.v \
+		rtl/main_memory_model.v \
+		tb/tb_member4.v
+vvp build/member4
+==================================================
+Starting Member 4 Testbench: Memory Interface & Model
+==================================================
+[Test 1] Apply reset and verify inactive controls in IDLE
+         Reset behavior verified cleanly (idle and mid-flight abort)
+[Test 2] Four-word retrieval, verified word ordering & 128-bit assembly
+         Verified word ordering confirmed: mem_data = {Word3, Word2, Word1, Word0}
+[Test 3] 16-byte block alignment enforcement
+         Alignment verified: unaligned addresses cleanly masked to 16-byte boundary
+[Test 4] Configurable latency coverage (0, 1, 5, and 10 clock cycles)
+         Latency = 0 cycles verified (elapsed wait = 5 cycles)
+         Latency = 1 cycle verified (elapsed wait = 9 cycles)
+         Latency = 5 cycles verified (elapsed wait = 25 cycles)
+         Latency = 10 cycles verified (elapsed wait = 45 cycles)
+[Test 5] Back-to-back consecutive requests to different blocks
+         Consecutive back-to-back block streams verified cleanly (4/4 passed)
+[Test 6] Deterministic default memory patterns for unwritten locations
+         Deterministic memory model pattern verified
+[Test 7] End-to-End Cache Controller Integration
+         Step 7a: Cold Miss at 0x00008044 (triggers 4-word refill)
+         Refill complete: CPU received 0xcafe0001
+         Step 7b: Post-Refill Hit at 0x00008048 (offset 10)
+         Cache hit passed: returned 0xcafe0002 with zero memory transactions
+         Step 7c: Post-Refill Hit at 0x00008040 (offset 00)
+         Step 7d: Post-Refill Hit at 0x0000804C (offset 11)
+         Step 7e: Conflict Miss & Replacement at Index 4
+         Cache line replacement and re-fetch verified successfully
+==================================================
+PASS: Member 4 Memory Interface & Model all PASSED!
+==================================================
+tb/tb_member4.v:486: $finish called at 2795000 (1ps)
+mkdir -p build
+iverilog -g2012 -Wall -s tb_cache_top -o build/member5 \
+		rtl/address_decoder.v rtl/tag_comparator.v rtl/cache_data_ram.v rtl/tag_ram.v rtl/valid_bit_ram.v rtl/cache_controller.v rtl/main_memory_interface.v rtl/cache_top.v \
+		rtl/main_memory_model.v \
+		tb/tb_member5.v
+vvp -n build/member5 +TRACE_DIR=traces +VCD
+VCD info: dumpfile build/tb_cache_top.vcd opened for output.
+==========================================================================
+Member 5: cache_top system-level verification
+==========================================================================
+[D1] Reset state
+[D2] Reset during an in-flight miss refill
+[T] Trace-driven tests (cold cache at the start of every run)
+  sequential  mem latency 0 :  512 requests   384 hits   128 misses    2433 cycles  OK
+  sequential  mem latency 1 :  512 requests   384 hits   128 misses    2945 cycles  OK
+  sequential  mem latency 5 :  512 requests   384 hits   128 misses    4993 cycles  OK
+  random      mem latency 0 :  512 requests   112 hits   400 misses    4337 cycles  OK
+  random      mem latency 1 :  512 requests   112 hits   400 misses    5937 cycles  OK
+  random      mem latency 5 :  512 requests   112 hits   400 misses   12337 cycles  OK
+  repeated    mem latency 0 :  512 requests   480 hits    32 misses    1761 cycles  OK
+  repeated    mem latency 1 :  512 requests   480 hits    32 misses    1889 cycles  OK
+  repeated    mem latency 5 :  512 requests   480 hits    32 misses    2401 cycles  OK
+  conflict    mem latency 0 :  144 requests    32 hits   112 misses    1217 cycles  OK
+  conflict    mem latency 1 :  144 requests    32 hits   112 misses    1665 cycles  OK
+  conflict    mem latency 5 :  144 requests    32 hits   112 misses    3457 cycles  OK
+
+Performance summary (clock 10 ns; latencies in cycles from request acceptance to data)
+--------------------------------------------------------------------------------------------------
+trace       mem_lat  requests  hits  misses  hit%    miss%   hit_t  miss_pen  AMAT    AMAT(ns)  elapsed
+--------------------------------------------------------------------------------------------------
+sequential      0       512    384     128   75.00   25.00   2.00      7.00   3.750     37.50     2433
+sequential      1       512    384     128   75.00   25.00   2.00     11.00   4.750     47.50     2945
+sequential      5       512    384     128   75.00   25.00   2.00     27.00   8.750     87.50     4993
+random          0       512    112     400   21.88   78.12   2.00      7.00   7.469     74.69     4337
+random          1       512    112     400   21.88   78.12   2.00     11.00  10.594    105.94     5937
+random          5       512    112     400   21.88   78.12   2.00     27.00  23.094    230.94    12337
+repeated        0       512    480      32   93.75    6.25   2.00      7.00   2.438     24.38     1761
+repeated        1       512    480      32   93.75    6.25   2.00     11.00   2.688     26.88     1889
+repeated        5       512    480      32   93.75    6.25   2.00     27.00   3.688     36.88     2401
+conflict        0       144     32     112   22.22   77.78   2.00      7.00   7.444     74.44     1217
+conflict        1       144     32     112   22.22   77.78   2.00     11.00  10.556    105.56     1665
+conflict        5       144     32     112   22.22   77.78   2.00     27.00  23.000    230.00     3457
+--------------------------------------------------------------------------------------------------
+Total: 5043 requests accepted, 5042 responses, 1 aborted by reset (D2), 3024 trace hits, 2016 trace misses
+       2018 block refills, 8070 memory word reads
+==========================================================================
+PASS: Member 5 cache_top system tests all PASSED (5040 trace requests)
+==========================================================================
+tb/tb_member5.v:548: $finish called at 454610000 (1ps)
