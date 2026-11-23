@@ -368,6 +368,6 @@ The simulation clock of 100 MHz must not be presented as timing closure.
 
 ## IEEE Project Report
 
-[Download the final project report](project_report/ByteMe_IEEE_Project_Report.docx)
+[Download the final project report](project_report/ByteMe_IEEE_Project_Report.pdf)
 for Team ByteMe, Section D, including the architecture, verification results,
 performance analysis, individual contributions, and references.
